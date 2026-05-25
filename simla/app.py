@@ -1,7 +1,4 @@
 """
-SiMLA — Sistema de Monitoreo y Simulación Ambiental
-     Lago de Amatitlán, Guatemala
-──────────────────────────────────────────────────────
 Módulo 1: Carga y Visualización de Datos Ambientales
 """
 
@@ -17,7 +14,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from data.generator import generar_serie_temporal, enriquecer_con_riesgo, THRESHOLDS
 
-# ─── Configuración de página ──────────────────────────────────────────────────
+#Configuración de página 
 st.set_page_config(
     page_title="SiMLA | Lago de Amatitlán",
     page_icon="🌊",
@@ -25,7 +22,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ─── Estilos CSS ─────────────────────────────────────────────────────────────
+#  Estilos CSS 
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -114,7 +111,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ─── Carga de datos ───────────────────────────────────────────────────────────
+#  Carga de datos 
 @st.cache_data
 def cargar_datos(fuente: str, archivo=None) -> pd.DataFrame:
     if fuente == "Datos simulados (demo)" or archivo is None:
@@ -124,7 +121,7 @@ def cargar_datos(fuente: str, archivo=None) -> pd.DataFrame:
     return enriquecer_con_riesgo(df)
 
 
-# ─── Sidebar ──────────────────────────────────────────────────────────────────
+#  Sidebar
 with st.sidebar:
     st.markdown("## 🌊 SiMLA")
     st.markdown("**Sistema de Monitoreo y Simulación Ambiental**")
@@ -157,14 +154,14 @@ with st.sidebar:
     st.caption("Universidad del Valle de Guatemala\nCurso: Retos Ambientales · 2026")
 
 
-# ─── Carga principal ──────────────────────────────────────────────────────────
+#  Carga principal 
 if fuente == "Cargar CSV propio" and archivo is None:
     st.info("⬆️ Sube un archivo CSV en la barra lateral para continuar, o cambia a 'Datos simulados'.")
     st.stop()
 
 df = cargar_datos(fuente, archivo)
 
-# ─── Filtros de fecha y época ─────────────────────────────────────────────────
+#  Filtros de fecha y época 
 col_f1, col_f2, col_f3 = st.columns([2, 2, 1])
 
 with col_f1:
@@ -207,15 +204,15 @@ if df_filtrado.empty:
     st.warning("No hay datos con los filtros seleccionados.")
     st.stop()
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MÓDULO 1: VISUALIZACIÓN DE DATOS
-# ═══════════════════════════════════════════════════════════════════════════════
+
+
+
 if modulo == "📊 Visualización de datos":
 
     st.markdown("## 📊 Visualización de Parámetros Ambientales")
     st.caption(f"Lago de Amatitlán · {len(df_filtrado)} registros en el período seleccionado")
 
-    # ── KPIs principales ──────────────────────────────────────────────────────
+    #  KPIs principales 
     st.markdown('<p class="section-title">Resumen del período</p>', unsafe_allow_html=True)
 
     params_kpi = {
@@ -243,7 +240,7 @@ if modulo == "📊 Visualización de datos":
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Selector de parámetro para gráfica principal ──────────────────────────
+    #  Selector de parámetro para gráfica principal 
     st.markdown('<p class="section-title">Serie temporal</p>', unsafe_allow_html=True)
 
     param_opciones = {
@@ -330,7 +327,7 @@ if modulo == "📊 Visualización de datos":
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # ── Gráficas secundarias: distribución + comparativa épocas ──────────────
+    #  Gráficas secundarias: distribución + comparativa épocas 
     col_d1, col_d2 = st.columns(2)
 
     with col_d1:
@@ -381,7 +378,7 @@ if modulo == "📊 Visualización de datos":
         )
         st.plotly_chart(fig_bar, use_container_width=True)
 
-    # ── Tabla de datos ────────────────────────────────────────────────────────
+    #  Tabla de datos 
     with st.expander("📋 Ver tabla de datos completa"):
         columnas_display = [
             "fecha", "epoca", "precipitacion", "caudal_villalobos",
@@ -403,15 +400,13 @@ if modulo == "📊 Visualización de datos":
         )
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MÓDULO 2: ÍNDICE DE RIESGO
-# ═══════════════════════════════════════════════════════════════════════════════
+
 elif modulo == "⚠️ Índice de riesgo":
 
     st.markdown("## ⚠️ Índice de Riesgo de Eutrofización")
     st.caption("Calculado en base a fósforo total, clorofila-a y oxígeno disuelto · Escala 0–100")
 
-    # ── Semáforo del período ──────────────────────────────────────────────────
+    #  Semáforo del período 
     riesgo_actual = df_filtrado["riesgo_score"].iloc[-1]
     nivel_actual  = df_filtrado["riesgo_nivel"].iloc[-1]
     color_actual  = df_filtrado["riesgo_color"].iloc[-1]
@@ -436,7 +431,7 @@ elif modulo == "⚠️ Índice de riesgo":
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Serie temporal del índice ─────────────────────────────────────────────
+    #  Serie temporal del índice 
     st.markdown('<p class="section-title">Evolución del índice de riesgo</p>', unsafe_allow_html=True)
 
     fig_risk = go.Figure()
@@ -481,7 +476,7 @@ elif modulo == "⚠️ Índice de riesgo":
     )
     st.plotly_chart(fig_risk, use_container_width=True)
 
-    # ── Distribución de niveles ───────────────────────────────────────────────
+    #  Distribución de niveles 
     col_pie1, col_pie2 = st.columns(2)
     with col_pie1:
         st.markdown('<p class="section-title">Distribución de niveles</p>', unsafe_allow_html=True)
@@ -528,9 +523,7 @@ elif modulo == "⚠️ Índice de riesgo":
         """, unsafe_allow_html=True)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MÓDULO 3: ANÁLISIS COMPARATIVO
-# ═══════════════════════════════════════════════════════════════════════════════
+
 elif modulo == "📈 Análisis comparativo":
 
     st.markdown("## 📈 Análisis Comparativo entre Parámetros")
